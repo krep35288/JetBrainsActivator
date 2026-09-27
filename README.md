@@ -157,28 +157,7 @@ powershell -ExecutionPolicy Bypass -File .\activate.ps1 -VtApiKey "30e938..."
 | 10 | ~40 | ~1 мин |
 | 50 | ~200 | ~30 сек |
 
----
 
-# 📁 СТРУКТУРА ПОСЛЕ ЗАПУСКА
-
-```
-C:\Users\<user>\
-├── jb-activate\
-│   ├── activate.ps1
-│   └── vtkeys.txt
-├── .jb_run\
-│   ├── ja-netfilter.jar
-│   ├── config\        (dns.conf, env.conf, native.conf, power.conf, url.conf)
-│   ├── plugins\       (dns.jar, env.jar, native.jar, power.jar, url.jar, hideme.jar, privacy.jar)
-│   └── backups\       (бэкапы изменённых файлов)
-└── AppData\Roaming\JetBrains\
-    └── IntelliJIdea2025.1\
-        ├── idea64.exe.vmoptions   ← +javaagent
-        ├── idea.key               ← сгенерированный ключ
-        └── disabled_plugins.txt   ← очищен
-```
-
----
 
 # 🔄 ОТКАТ
 
