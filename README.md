@@ -268,7 +268,7 @@ Test-NetConnection ckey.run -Port 443
 
 MIT
 
-# 🙏 БЛАГОДАРНОСТИ
+# 🙏 БЛАГОДАРНОСТЬ
 
 - [ja-netfilter](https://gitee.com/ja-netfilter/ja-netfilter)
 - [VirusTotal](https://www.virustotal.com/)
