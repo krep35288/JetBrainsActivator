@@ -1,17 +1,4 @@
 #Requires -Version 5.1
-<#
-    JetBrains activation helper (Windows) + VirusTotal с пулом ключей.
-
-    Источники ключей (первый найденный побеждает):
-      1) -VtApiKeys @("k1","k2",...)  или  -VtApiKey "k1"
-      2) $env:VT_API_KEYS   (через , или ;)
-      3) $env:VT_API_KEY    (один ключ)
-      4) vtkeys.txt рядом со скриптом   (один ключ на строку, # — комментарий)
-      5) ~/.vt_keys   (fallback)
-
-    До 50 ключей. При 401/403 ключ помечается мёртвым и переключается.
-    При 429 — переключение, если есть живые, иначе ожидание.
-#>
 [CmdletBinding()]
 param(
     [switch]$Yes,
@@ -77,7 +64,6 @@ function Short-Key { param([string]$K) if ($K.Length -ge 8) { return $K.Substrin
 
 # ============ Пул VT-ключей ============
 function Get-VtKeysFromFile {
-    # vtkeys.txt рядом со скриптом — приоритетный источник
     $localFile = Join-Path $PSScriptRoot "vtkeys.txt"
     if (Test-Path $localFile) {
         Write-Log INFO "VT: читаю ключи из $localFile"
@@ -85,7 +71,6 @@ function Get-VtKeysFromFile {
         return @($lines | ForEach-Object { $_.Trim() } |
                  Where-Object { $_ -and -not $_.StartsWith("#") })
     }
-    # fallback: ~/.vt_keys, если вдруг vtkeys.txt нет
     $homeFile = Join-Path $UserHome ".vt_keys"
     if (Test-Path $homeFile) {
         Write-Log WARN "VT: vtkeys.txt не найден, читаю $homeFile"
@@ -138,13 +123,10 @@ function Get-AliveKeyCount {
 }
 
 function Get-ReadyVtKey {
-    # Возвращает ключ, который сейчас можно использовать (с учётом кулдауна),
-    # либо $null, если все мертвы.
     $n = $script:VtKeyPool.Count
     if ($n -eq 0) { return $null }
     $now = [DateTime]::Now
 
-    # 1-й проход: ищем живой ключ, у которого кулдаун прошёл
     for ($i = 0; $i -lt $n; $i++) {
         $idx = ($script:VtCurrentKeyIdx + $i) % $n
         $k = $script:VtKeyPool[$idx]
@@ -155,7 +137,6 @@ function Get-ReadyVtKey {
         }
     }
 
-    # 2-й проход: все живые в кулдауне — ждём самый «старый»
     $bestIdx = -1
     $bestTime = [DateTime]::MaxValue
     for ($i = 0; $i -lt $n; $i++) {
